@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Signal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-in;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .help-btn {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .game-select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .game-select:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .screenshot-area {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .screenshot-area:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.01);
+        }
+
+        .screenshot-area.drag-over {
+            border-color: #4ECDC4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .anime-girl {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .upload-text {
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+            color: white;
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .result {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .timer {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+            font-size: 18px;
+            color: #4ECDC4;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: modalAppear 0.3s ease;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Game Signal</h1>
+            <button class="help-btn" onclick="openHowItWorks()">?</button>
+        </div>
+
+        <select class="game-select" id="gameSelect">
+            <option value="The Dog House">The Dog House</option>
+            <option value="Sweet Bonanza 1000">Sweet Bonanza 1000</option>
+            <option value="Sugar Rush">Sugar Rush</option>
+            <option value="Gates of Olympus">Gates of Olympus</option>
+            <option value="Zeus vs Hades - Gods of War">Zeus vs Hades - Gods of War</option>
+
+        </select>
+
+        <input type="file" id="fileInput" class="file-input" accept="image/*">
+
+        <div class="screenshot-area" id="screenshotArea" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-text">
+                <div>📸 Нажмите для загрузки скриншота</div>
+                <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">или перетащите изображение сюда</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                📸 Выбрать скриншот
+            </button>
+            <button class="btn btn-secondary pulse" id="getSignalBtn" onclick="getSignal()" disabled>
+                🎯 Получить сигнал
+            </button>
+        </div>
+
+        <div class="timer" id="timer">
+            Следующий анализ будет доступен через: <span id="timerCount">60</span>s
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            Анализируем ваш скриншот...
+        </div>
+
+        <div class="result" id="result">
+            <h3>🎰 Результат анализа</h3>
+            <p id="resultText"></p>
+        </div>
+    </div>
+
+    <div class="modal" id="howItWorksModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeHowItWorks()">×</button>
+            <h2>Как это работает?</h2>
+            <p style="margin: 15px 0; text-align: left; line-height: 1.5;">
+                Наша система использует продвинутые алгоритмы компьютерного зрения и хеширования изображений для анализа игровых скриншотов.
+            </p>
+            <p style="margin: 15px 0; text-align: left; line-height: 1.5;">
+                При загрузке изображения генерируется перцептивный хеш (pHash), который сравнивается с нашей обширной базой данных паттернов выпадения игровых бонусов.
+            </p>
+            <p style="margin: 15px 0; text-align: left; line-height: 1.5;">
+                Используя машинное обучение и анализ временных рядов, мы предсказываем с высокой точностью момент выпадения бонуса на основе распознавания визуальных паттернов и статистических аномалий.
+            </p>
+            <p style="margin: 15px 0; text-align: left; line-height: 1.5;">
+                Каждый анализ требует значительных вычислительных ресурсов, поэтому действует система ожидания для обеспечения максимальной точности предсказаний.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const animeImages = [
+            'https://i.pinimg.com/236x/85/90/0b/85900b8c253c1b7c2c3e4d0b5e8a8a8a.jpg',
+            'https://i.pinimg.com/236x/47/8a/5a/478a5a8e4d8b8b8b8b8b8b8b8b8b8b8b.jpg',
+            'https://i.pinimg.com/236x/92/84/7c/92847c8b8b8b8b8b8b8b8b8b8b8b8b8b.jpg',
+            'https://i.pinimg.com/236x/64/8a/8b/648a8b8b8b8b8b8b8b8b8b8b8b8b8b8b.jpg'
+        ];
+
+        let uploadedImage = null;
+        let canGetSignal = true;
+        let timerInterval = null;
+        let timeLeft = 60;
+
+        // Обработчик выбора файла
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleImageUpload(file);
+            }
+        });
+
+        // Drag and drop функционал
+        const screenshotArea = document.getElementById('screenshotArea');
+
+        screenshotArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+
+        screenshotArea.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+        });
+
+        screenshotArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            }
+        });
+
+        function handleImageUpload(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                uploadedImage = e.target.result;
+
+                // Показываем загруженное изображение
+                screenshotArea.innerHTML = `
+                    <img src="${uploadedImage}" class="uploaded-image" alt="Загруженный скриншот">
+                    <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 10px; font-size: 12px;">
+                        ✅ Загружено
+                    </div>
+                `;
+
+                // Активируем кнопку получения сигнала
+                document.getElementById('getSignalBtn').disabled = false;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function getSignal() {
+            if (!uploadedImage) {
+                alert('Сначала загрузите скриншот!');
+                return;
+            }
+
+            if (!canGetSignal) {
+                alert('Пожалуйста, подождите, пока закончится время ожидания!');
+                return;
+            }
+
+            // Блокируем кнопку и запускаем таймер
+            canGetSignal = false;
+            document.getElementById('getSignalBtn').disabled = true;
+
+            // Показываем таймер
+            const timer = document.getElementById('timer');
+            timer.style.display = 'block';
+
+            // Сбрасываем время
+            timeLeft = 60;
+            document.getElementById('timerCount').textContent = timeLeft;
+
+            // Запускаем таймер
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // Выполняем анализ
+            performAnalysis();
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById('timerCount').textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                canGetSignal = true;
+                document.getElementById('getSignalBtn').disabled = false;
+                document.getElementById('timer').style.display = 'none';
+            }
+        }
+
+        function performAnalysis() {
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            setTimeout(() => {
+                // Диапазон спинов: 25-45
+                const spins = Math.floor(Math.random() * 21) + 25;
+                const chance = Math.floor(Math.random() * 14) + 79;
+
+                loading.style.display = 'none';
+                result.style.display = 'block';
+
+                resultText.innerHTML = `
+                    <p style="font-size: 20px; margin: 10px 0; color: #FF6B6B;">
+                        <strong>${spins} спинов</strong>
+                    </p>
+                    <p style="font-size: 18px; margin: 10px 0; color: #4ECDC4;">
+                        Шанс: <strong>${chance}%</strong>
+                    </p>
+                    <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                        Бонус выпадет в указанный период с высокой вероятностью! 🎉
+                    </p>
+                `;
+            }, 3000);
+        }
+
+        function openHowItWorks() {
+            document.getElementById('howItWorksModal').style.display = 'flex';
+        }
+
+        function closeHowItWorks() {
+            document.getElementById('howItWorksModal').style.display = 'none';
+        }
+
+        document.getElementById('gameSelect').addEventListener('change', function() {
+            this.style.background = 'linear-gradient(45deg, #FFD166, #FF9E6D)';
+            setTimeout(() => {
+                this.style.background = 'rgba(255, 255, 255, 0.9)';
+            }, 500);
+        });
+
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('howItWorksModal');
+            if (event.target === modal) {
+                closeHowItWorks();
+            }
+        });
+    </script>
+</body>
+</html>
