@@ -64,6 +64,47 @@
             transform: scale(1.1);
         }
 
+        /* Стили для выбора режимов */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .mode-btn .icon {
+            font-size: 20px;
+        }
+
         .game-select {
             width: 100%;
             padding: 15px;
@@ -104,14 +145,6 @@
         .screenshot-area.drag-over {
             border-color: #4ECDC4;
             background: rgba(78, 205, 196, 0.2);
-        }
-
-        .anime-girl {
-            width: 180px;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 10px;
-            animation: float 3s ease-in-out infinite;
         }
 
         .uploaded-image {
@@ -204,15 +237,317 @@
             display: none;
         }
 
-        .timer {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+        /* Стили для режима Mines */
+        .mines-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .mine-tile {
+            aspect-ratio: 1;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            border: 2px solid #1a252f;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mine-tile:hover {
+            transform: scale(1.05);
+            background: linear-gradient(145deg, #34495e, #2c3e50);
+        }
+
+        .mine-tile.revealed {
+            background: linear-gradient(145deg, #27ae60, #2ecc71);
+            border-color: #219653;
+            animation: tileReveal 0.6s ease-out;
+        }
+
+        .mine-tile.revealed.star {
+            background: linear-gradient(145deg, #f39c12, #f1c40f);
+            border-color: #e67e22;
+            animation: starReveal 0.8s ease-out;
+        }
+
+        .mine-tile.revealed.star::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+            animation: starGlow 2s ease-in-out infinite;
+        }
+
+        .mines-result {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
             padding: 15px;
+            border-radius: 15px;
             margin-top: 15px;
             text-align: center;
             display: none;
-            font-size: 18px;
+            animation: slideUp 0.5s ease;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f1c40f;
+            border-radius: 50%;
+            animation: confettiFall 3s ease-in-out forwards;
+        }
+
+        /* Стили для ROCKET X */
+        .rocketx-game, .crash-game {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .rocketx-main, .crash-main {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .rocketx-rocket-area, .crash-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            height: 120px;
+        }
+
+        .rocket-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .rocket {
+            font-size: 64px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .flame-effect {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(0deg, 
+                #FF6B6B 0%, 
+                #FFD166 30%, 
+                #FF9E6D 70%, 
+                transparent 100%);
+            border-radius: 50% 50% 20% 20%;
+            filter: blur(5px);
+            z-index: 1;
+            bottom: -30px;
+        }
+
+        .rocketx-prediction, .crash-prediction {
+            margin-bottom: 20px;
+        }
+
+        .prediction-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #4ECDC4;
+        }
+
+        .prediction-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            justify-content: center;
+        }
+
+        .prediction-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prediction-item:last-child {
+            border-bottom: none;
+        }
+
+        .prediction-label {
+            font-size: 14px;
+            opacity: 0.8;
+            flex: 1;
+        }
+
+        .prediction-value {
+            font-weight: bold;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .probability-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .high-probability {
+            background: rgba(78, 205, 196, 0.3);
             color: #4ECDC4;
+        }
+
+        .medium-probability {
+            background: rgba(255, 209, 102, 0.3);
+            color: #FFD166;
+        }
+
+        .probability-high {
+            color: #4ECDC4;
+        }
+
+        .rocketx-result, .crash-result {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ SPEED&CASH */
+        .speedcash-game {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .balls-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .ball {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            transition: all 0.5s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .ball-blue {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+
+        .ball-orange {
+            background: linear-gradient(145deg, #e67e22, #d35400);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
+        }
+
+        .ball.winner {
+            animation: winnerGlow 2s ease-in-out infinite, gentleBounce 2s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+        }
+
+        .ball-content {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .safe-multiplier {
+            color: #2ecc71;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .not-safe {
+            color: #e74c3c;
+            font-size: 28px;
+        }
+
+        .ball-label {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .speedcash-result {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Стили для заглушек других режимов */
+        .mode-content .screenshot-area {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coming-soon {
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .coming-soon .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
         }
 
         .modal {
@@ -293,8 +628,159 @@
             }
         }
 
+        /* Анимации для Mines */
+        @keyframes tileReveal {
+            0% {
+                transform: scale(1) rotate(0deg);
+                background: linear-gradient(145deg, #2c3e50, #34495e);
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+                background: linear-gradient(145deg, #3498db, #2980b9);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                background: linear-gradient(145deg, #27ae60, #2ecc71);
+            }
+        }
+
+        @keyframes starReveal {
+            0% {
+                transform: scale(0.8) rotate(-180deg);
+                opacity: 0;
+                background: linear-gradient(145deg, #2c3e50, #34495e);
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg);
+                opacity: 1;
+                background: linear-gradient(145deg, #f39c12, #f1c40f);
+            }
+            75% {
+                transform: scale(0.95) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                background: linear-gradient(145deg, #f39c12, #f1c40f);
+            }
+        }
+
+        @keyframes starGlow {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Анимации для ROCKET X */
+        @keyframes rocketFloat {
+            0%, 100% { 
+                transform: translateY(0px); 
+            }
+            50% { 
+                transform: translateY(-8px); 
+            }
+        }
+
+        @keyframes rocketLaunch {
+            0% { 
+                transform: translateY(0) scale(1); 
+            }
+            25% { 
+                transform: translateY(-50px) scale(1.1); 
+            }
+            50% { 
+                transform: translateY(-100px) scale(1); 
+            }
+            75% { 
+                transform: translateY(-150px) scale(1.1); 
+            }
+            100% { 
+                transform: translateY(-200px) scale(1); 
+            }
+        }
+
+        @keyframes flamePulse {
+            0%, 100% {
+                transform: scaleY(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scaleY(1.3);
+                opacity: 1;
+            }
+        }
+
+        /* НОВЫЕ АНИМАЦИИ ДЛЯ SPEED&CASH */
+        @keyframes winnerGlow {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.6),
+                            0 8px 25px rgba(52, 152, 219, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 255, 255, 0.9),
+                            0 12px 35px rgba(52, 152, 219, 0.8);
+            }
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% {
+                transform: translateY(0) scale(1.1);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.1);
+            }
+        }
+
+        .rocket-floating {
+            animation: rocketFloat 3s ease-in-out infinite;
+        }
+
+        .rocket-launching {
+            animation: rocketLaunch 3s ease-in-out infinite;
+        }
+
+        .flame-burning {
+            animation: flamePulse 0.5s ease-in-out infinite;
+        }
+
         .pulse {
             animation: pulse 2s infinite;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
         }
     </style>
 </head>
@@ -305,45 +791,258 @@
             <button class="help-btn" onclick="openHowItWorks()">?</button>
         </div>
 
-        <select class="game-select" id="gameSelect">
-            <option value="The Dog House">The Dog House</option>
-            <option value="Sweet Bonanza 1000">Sweet Bonanza 1000</option>
-            <option value="Sugar Rush">Sugar Rush</option>
-            <option value="Gates of Olympus">Gates of Olympus</option>
-            <option value="Zeus vs Hades - Gods of War">Zeus vs Hades - Gods of War</option>
+        <!-- Выбор режимов -->
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="slots">
+                <span class="icon">🎰</span>
+                <span>Slots</span>
+            </button>
+            <button class="mode-btn" data-mode="speedcash">
+                <span class="icon">🏎️</span>
+                <span>SPEED&CASH</span>
+            </button>
+            <button class="mode-btn" data-mode="crash">
+                <span class="icon">📈</span>
+                <span>CRASH</span>
+            </button>
+            <button class="mode-btn" data-mode="penalty">
+                <span class="icon">🥅</span>
+                <span>PENALTY</span>
+            </button>
+            <button class="mode-btn" data-mode="mines">
+                <span class="icon">💣</span>
+                <span>MINES</span>
+            </button>
+            <button class="mode-btn" data-mode="dice">
+                <span class="icon">🎲</span>
+                <span>DICE</span>
+            </button>
+            <button class="mode-btn" data-mode="rocketx">
+                <span class="icon">🚀</span>
+                <span>ROCKET X</span>
+            </button>
+        </div>
 
-        </select>
+        <!-- Контент для режима слотов -->
+        <div class="mode-content" id="slots-content">
+            <select class="game-select" id="gameSelect">
+                <option value="The Dog House">The Dog House</option>
+                <option value="Sweet Bonanza 1000">Sweet Bonanza 1000</option>
+                <option value="Sugar Rush">Sugar Rush</option>
+                <option value="Gates of Olympus">Gates of Olympus</option>
+                <option value="Zeus vs Hades - Gods of War">Zeus vs Hades - Gods of War</option>
+            </select>
 
-        <input type="file" id="fileInput" class="file-input" accept="image/*">
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
 
-        <div class="screenshot-area" id="screenshotArea" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-text">
-                <div>📸 Нажмите для загрузки скриншота</div>
-                <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">или перетащите изображение сюда</div>
+            <div class="screenshot-area" id="screenshotArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-text">
+                    <div>📸 Нажмите для загрузки скриншота</div>
+                    <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">или перетащите изображение сюда</div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                    📸 Выбрать скриншот
+                </button>
+                <button class="btn btn-secondary pulse" id="getSignalBtn" onclick="getSignal()" disabled>
+                    🎯 Получить сигнал
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Анализируем ваш скриншот...
+            </div>
+
+            <div class="result" id="result">
+                <h3>🎰 Результат анализа</h3>
+                <p id="resultText"></p>
             </div>
         </div>
 
-        <div class="buttons">
-            <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                📸 Выбрать скриншот
-            </button>
-            <button class="btn btn-secondary pulse" id="getSignalBtn" onclick="getSignal()" disabled>
-                🎯 Получить сигнал
-            </button>
+        <!-- Контент для режима Mines -->
+        <div class="mode-content" id="mines-content" style="display: none;">
+            <div class="mines-grid" id="minesGrid">
+                <!-- Сетка 5x5 будет сгенерирована через JavaScript -->
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-secondary pulse" id="getMinesSignalBtn" onclick="getMinesSignal()">
+                    🎯 Получить сигнал
+                </button>
+            </div>
+
+            <div class="loading" id="minesLoading">
+                <div class="spinner"></div>
+                Анализируем безопасные ячейки...
+            </div>
+
+            <div class="mines-result" id="minesResult">
+                <h3>💣 Результат анализа</h3>
+                <p id="minesResultText"></p>
+            </div>
         </div>
 
-        <div class="timer" id="timer">
-            Следующий анализ будет доступен через: <span id="timerCount">60</span>s
+        <!-- ОБНОВЛЕННЫЙ КОНТЕНТ ДЛЯ SPEED&CASH -->
+        <div class="mode-content" id="speedcash-content" style="display: none;">
+            <div class="speedcash-game">
+                <!-- Два шарика -->
+                <div class="balls-container">
+                    <div class="ball ball-blue" id="blueBall">
+                        <div class="ball-content" id="blueContent"></div>
+                        <div class="ball-label">Синий</div>
+                    </div>
+                    <div class="ball ball-orange" id="orangeBall">
+                        <div class="ball-content" id="orangeContent"></div>
+                        <div class="ball-label">Оранжевый</div>
+                    </div>
+                </div>
+
+                <!-- Кнопка анализа -->
+                <div class="buttons">
+                    <button class="btn btn-secondary pulse" id="analyzeSpeedCashBtn" onclick="analyzeSpeedCash()">
+                        🎯 Получить сигнал
+                    </button>
+                </div>
+
+                <div class="loading" id="speedcashLoading">
+                    <div class="spinner"></div>
+                    Анализируем вероятность...
+                </div>
+
+                <div class="speedcash-result" id="speedcashResult">
+                    <div class="result-success">
+                        <h3>✅ Сигнал получен!</h3>
+                        <p id="winnerText">Выделенный шар показывает рекомендуемую ставку</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            Анализируем ваш скриншот...
+        <!-- Контент для CRASH -->
+        <div class="mode-content" id="crash-content" style="display: none;">
+            <div class="crash-game">
+                <!-- Прогноз системы -->
+                <div class="crash-prediction">
+                    <div class="prediction-card">
+                        <div class="prediction-header">
+                            <span class="prediction-icon">🎯</span>
+                            <span>ПРОГНОЗ СИСТЕМЫ</span>
+                        </div>
+                        <div class="prediction-content">
+                            <div class="prediction-item">
+                                <span class="prediction-label">Максимум до:</span>
+                                <span class="prediction-value" id="crashPredictedMax">11.87x</span>
+                                <span class="probability-badge" id="crashMaxProbability">41%</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Рекомендация:</span>
+                                <span class="prediction-value probability-high" id="crashPredictedRecommendation">1.95x</span>
+                                <span class="probability-badge high-probability" id="crashRecommendationProbability">94%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка анализа -->
+                <div class="buttons">
+                    <button class="btn btn-secondary pulse" id="analyzeCrashBtn" onclick="analyzeCrash()">
+                        🎯 Проанализировать
+                    </button>
+                </div>
+
+                <div class="loading" id="crashLoading">
+                    <div class="spinner"></div>
+                    Анализируем график...
+                </div>
+
+                <div class="crash-result" id="crashResult">
+                    <div class="result-success">
+                        <h3>✅ Анализ завершен</h3>
+                        <p>Система готова к работе! Используйте прогноз выше для оптимальной игры.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="result" id="result">
-            <h3>🎰 Результат анализа</h3>
-            <p id="resultText"></p>
+        <!-- Контент для ROCKET X -->
+        <div class="mode-content" id="rocketx-content" style="display: none;">
+            <div class="rocketx-game">
+                <!-- Основное игровое поле -->
+                <div class="rocketx-main">
+                    <!-- Ракета -->
+                    <div class="rocketx-rocket-area">
+                        <div class="rocket-container">
+                            <div class="flame-effect flame-burning"></div>
+                            <div class="rocket rocket-floating" id="rocket">🚀</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Прогноз системы -->
+                <div class="rocketx-prediction">
+                    <div class="prediction-card">
+                        <div class="prediction-header">
+                            <span class="prediction-icon">🎯</span>
+                            <span>ПРОГНОЗ СИСТЕМЫ</span>
+                        </div>
+                        <div class="prediction-content">
+                            <div class="prediction-item">
+                                <span class="prediction-label">Максимум до:</span>
+                                <span class="prediction-value" id="rocketPredictedMax">12.45x</span>
+                                <span class="probability-badge" id="rocketMaxProbability">38%</span>
+                            </div>
+                            <div class="prediction-item">
+                                <span class="prediction-label">Рекомендация:</span>
+                                <span class="prediction-value probability-high" id="rocketPredictedRecommendation">2.15x</span>
+                                <span class="probability-badge high-probability" id="rocketRecommendationProbability">91%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка анализа -->
+                <div class="buttons">
+                    <button class="btn btn-secondary pulse" id="analyzeRocketXBtn" onclick="analyzeRocketX()">
+                        🎯 Проанализировать полет
+                    </button>
+                </div>
+
+                <div class="loading" id="rocketxLoading">
+                    <div class="spinner"></div>
+                    Анализируем траекторию полета...
+                </div>
+
+                <div class="rocketx-result" id="rocketxResult">
+                    <div class="result-success">
+                        <h3>✅ Анализ завершен</h3>
+                        <p>Система готова к работе! Используйте прогноз выше для оптимальной игры.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контент для других режимов (заглушки) -->
+        <div class="mode-content" id="penalty-content" style="display: none;">
+            <div class="screenshot-area">
+                <div class="coming-soon">
+                    <span class="icon">🥅</span>
+                    <div>PENALTY</div>
+                    <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">Скоро будет доступен</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mode-content" id="dice-content" style="display: none;">
+            <div class="screenshot-area">
+                <div class="coming-soon">
+                    <span class="icon">🎲</span>
+                    <div>DICE</div>
+                    <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">Скоро будет доступен</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -360,26 +1059,314 @@
             <p style="margin: 15px 0; text-align: left; line-height: 1.5;">
                 Используя машинное обучение и анализ временных рядов, мы предсказываем с высокой точностью момент выпадения бонуса на основе распознавания визуальных паттернов и статистических аномалий.
             </p>
-            <p style="margin: 15px 0; text-align: left; line-height: 1.5;">
-                Каждый анализ требует значительных вычислительных ресурсов, поэтому действует система ожидания для обеспечения максимальной точности предсказаний.
-            </p>
         </div>
     </div>
 
     <script>
-        const animeImages = [
-            'https://i.pinimg.com/236x/85/90/0b/85900b8c253c1b7c2c3e4d0b5e8a8a8a.jpg',
-            'https://i.pinimg.com/236x/47/8a/5a/478a5a8e4d8b8b8b8b8b8b8b8b8b8b8b.jpg',
-            'https://i.pinimg.com/236x/92/84/7c/92847c8b8b8b8b8b8b8b8b8b8b8b8b8b.jpg',
-            'https://i.pinimg.com/236x/64/8a/8b/648a8b8b8b8b8b8b8b8b8b8b8b8b8b8b.jpg'
-        ];
-
         let uploadedImage = null;
-        let canGetSignal = true;
-        let timerInterval = null;
-        let timeLeft = 60;
+        let currentMode = 'slots';
 
-        // Обработчик выбора файла
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMinesGrid();
+            generateRocketXPrediction();
+            generateCrashPrediction();
+        });
+
+        // Обработчик выбора режима
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Убираем активный класс у всех кнопок
+                document.querySelectorAll('.mode-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Добавляем активный класс к текущей кнопке
+                this.classList.add('active');
+                
+                // Получаем выбранный режим
+                currentMode = this.getAttribute('data-mode');
+                
+                // Показываем соответствующий контент
+                document.querySelectorAll('.mode-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(`${currentMode}-content`).style.display = 'block';
+                
+                // Сбрасываем сетку Mines при переключении
+                if (currentMode === 'mines') {
+                    resetMinesGrid();
+                }
+                // Генерируем новый прогноз при переключении
+                if (currentMode === 'rocketx') {
+                    generateRocketXPrediction();
+                }
+                if (currentMode === 'crash') {
+                    generateCrashPrediction();
+                }
+                if (currentMode === 'speedcash') {
+                    resetSpeedCash();
+                }
+            });
+        });
+
+        // ОБНОВЛЕННЫЕ ФУНКЦИИ SPEED&CASH
+        function resetSpeedCash() {
+            const blueBall = document.getElementById('blueBall');
+            const orangeBall = document.getElementById('orangeBall');
+            const blueContent = document.getElementById('blueContent');
+            const orangeContent = document.getElementById('orangeContent');
+            
+            blueBall.classList.remove('winner');
+            orangeBall.classList.remove('winner');
+            
+            blueContent.textContent = '';
+            blueContent.className = 'ball-content';
+            orangeContent.textContent = '';
+            orangeContent.className = 'ball-content';
+            
+            document.getElementById('speedcashResult').style.display = 'none';
+        }
+
+        function analyzeSpeedCash() {
+            const btn = document.getElementById('analyzeSpeedCashBtn');
+            const loading = document.getElementById('speedcashLoading');
+            const result = document.getElementById('speedcashResult');
+            const winnerText = document.getElementById('winnerText');
+            const blueBall = document.getElementById('blueBall');
+            const orangeBall = document.getElementById('orangeBall');
+            const blueContent = document.getElementById('blueContent');
+            const orangeContent = document.getElementById('orangeContent');
+            
+            btn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            // Сбрасываем предыдущие результаты
+            resetSpeedCash();
+            
+            // Случайно выбираем победителя
+            const isBlueWinner = Math.random() > 0.5;
+            const winnerBall = isBlueWinner ? blueBall : orangeBall;
+            const winnerContent = isBlueWinner ? blueContent : orangeContent;
+            const loserContent = isBlueWinner ? orangeContent : blueContent;
+            const winnerColor = isBlueWinner ? "синий" : "оранжевый";
+            
+            // Генерируем случайный множитель от 1.4 до 2.2
+            const multiplier = (Math.random() * (2.2 - 1.4) + 1.4).toFixed(1);
+            
+            setTimeout(() => {
+                loading.style.display = 'none';
+                
+                // Активируем анимацию победителя
+                winnerBall.classList.add('winner');
+                
+                // Устанавливаем контент в центре кругов
+                winnerContent.innerHTML = `<span class="safe-multiplier">x${multiplier}</span>`;
+                loserContent.innerHTML = `<span class="not-safe">❌</span>`;
+                
+                // Показываем результат
+                result.style.display = 'block';
+                winnerText.textContent = `Рекомендуется ставить на ${winnerColor} шар с множителем ${multiplier}x!`;
+                
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        // CRASH функции
+        function generateCrashPrediction() {
+            const maxMultiplier = (Math.random() * (12.23 - 8.41) + 8.41).toFixed(2);
+            const maxProbability = Math.floor(Math.random() * (49 - 34 + 1) + 34);
+            const recommendation = (Math.random() * (2.24 - 1.32) + 1.32).toFixed(2);
+            const recommendationProbability = Math.floor(Math.random() * (96 - 89 + 1) + 89);
+            
+            document.getElementById('crashPredictedMax').textContent = maxMultiplier + 'x';
+            document.getElementById('crashMaxProbability').textContent = maxProbability + '%';
+            document.getElementById('crashPredictedRecommendation').textContent = recommendation + 'x';
+            document.getElementById('crashRecommendationProbability').textContent = recommendationProbability + '%';
+            
+            const maxProbBadge = document.getElementById('crashMaxProbability');
+            const recProbBadge = document.getElementById('crashRecommendationProbability');
+            
+            maxProbBadge.className = 'probability-badge ' + (maxProbability > 40 ? 'medium-probability' : '');
+            recProbBadge.className = 'probability-badge high-probability';
+        }
+
+        function analyzeCrash() {
+            const btn = document.getElementById('analyzeCrashBtn');
+            const loading = document.getElementById('crashLoading');
+            const result = document.getElementById('crashResult');
+            
+            btn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            setTimeout(() => {
+                generateCrashPrediction();
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        // ROCKET X функции
+        function generateRocketXPrediction() {
+            const maxMultiplier = (Math.random() * (12.23 - 8.41) + 8.41).toFixed(2);
+            const maxProbability = Math.floor(Math.random() * (49 - 34 + 1) + 34);
+            const recommendation = (Math.random() * (2.24 - 1.32) + 1.32).toFixed(2);
+            const recommendationProbability = Math.floor(Math.random() * (96 - 89 + 1) + 89);
+            
+            document.getElementById('rocketPredictedMax').textContent = maxMultiplier + 'x';
+            document.getElementById('rocketMaxProbability').textContent = maxProbability + '%';
+            document.getElementById('rocketPredictedRecommendation').textContent = recommendation + 'x';
+            document.getElementById('rocketRecommendationProbability').textContent = recommendationProbability + '%';
+            
+            const maxProbBadge = document.getElementById('rocketMaxProbability');
+            const recProbBadge = document.getElementById('rocketRecommendationProbability');
+            
+            maxProbBadge.className = 'probability-badge ' + (maxProbability > 40 ? 'medium-probability' : '');
+            recProbBadge.className = 'probability-badge high-probability';
+        }
+
+        function analyzeRocketX() {
+            const btn = document.getElementById('analyzeRocketXBtn');
+            const loading = document.getElementById('rocketxLoading');
+            const result = document.getElementById('rocketxResult');
+            const rocket = document.getElementById('rocket');
+            const flame = document.querySelector('.flame-effect');
+            
+            btn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            rocket.classList.remove('rocket-floating');
+            rocket.classList.add('rocket-launching');
+            
+            if (flame) {
+                flame.style.animationDuration = '0.3s';
+            }
+            
+            setTimeout(() => {
+                rocket.classList.remove('rocket-launching');
+                rocket.classList.add('rocket-floating');
+                
+                if (flame) {
+                    flame.style.animationDuration = '0.5s';
+                }
+                
+                generateRocketXPrediction();
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                btn.disabled = false;
+            }, 3000);
+        }
+
+        // Инициализация сетки Mines 5x5
+        function initializeMinesGrid() {
+            const grid = document.getElementById('minesGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'mine-tile';
+                tile.textContent = '?';
+                grid.appendChild(tile);
+            }
+        }
+
+        // Сброс сетки Mines
+        function resetMinesGrid() {
+            const tiles = document.querySelectorAll('.mine-tile');
+            tiles.forEach(tile => {
+                tile.className = 'mine-tile';
+                tile.textContent = '?';
+            });
+            document.getElementById('minesResult').style.display = 'none';
+        }
+
+        // Функция для получения сигнала в режиме Mines
+        function getMinesSignal() {
+            const btn = document.getElementById('getMinesSignalBtn');
+            const loading = document.getElementById('minesLoading');
+            const result = document.getElementById('minesResult');
+
+            btn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            resetMinesGrid();
+            performMinesAnalysis();
+        }
+
+        function performMinesAnalysis() {
+            const loading = document.getElementById('minesLoading');
+            const result = document.getElementById('minesResult');
+            const resultText = document.getElementById('minesResultText');
+            const tiles = document.querySelectorAll('.mine-tile');
+
+            setTimeout(() => {
+                const safeCellsCount = Math.floor(Math.random() * 7) + 3;
+                const allIndexes = Array.from({length: 25}, (_, i) => i);
+                const shuffledIndexes = allIndexes.sort(() => Math.random() - 0.5);
+                const safeIndexes = shuffledIndexes.slice(0, safeCellsCount);
+
+                loading.style.display = 'none';
+
+                safeIndexes.forEach((index, i) => {
+                    setTimeout(() => {
+                        const tile = tiles[index];
+                        tile.classList.add('revealed', 'star');
+                        tile.textContent = '⭐';
+                        createConfetti(tile);
+                        
+                        if (i === safeIndexes.length - 1) {
+                            setTimeout(() => {
+                                result.style.display = 'block';
+                                resultText.innerHTML = `
+                                    <p style="font-size: 20px; margin: 10px 0; color: #27ae60;">
+                                        <strong>${safeCellsCount} безопасных ячеек</strong>
+                                    </p>
+                                    <p style="font-size: 16px; margin: 10px 0; color: #666;">
+                                        Открытые ячейки со звездами безопасны для клика! 💫
+                                    </p>
+                                `;
+                                result.classList.add('bounce-in');
+                                document.getElementById('getMinesSignalBtn').disabled = false;
+                            }, 500);
+                        }
+                    }, i * 200);
+                });
+            }, 1500);
+        }
+
+        // Функция для создания конфетти
+        function createConfetti(element) {
+            const rect = element.getBoundingClientRect();
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = (rect.left + rect.width / 2) + 'px';
+                    confetti.style.top = (rect.top + rect.height / 2) + 'px';
+                    confetti.style.background = getRandomColor();
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Удаляем конфетти после анимации
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
+        function getRandomColor() {
+            const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#1abc9c', '#e67e22'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Остальной код для режима Slots
         document.getElementById('fileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -387,7 +1374,6 @@
             }
         });
 
-        // Drag and drop функционал
         const screenshotArea = document.getElementById('screenshotArea');
 
         screenshotArea.addEventListener('dragover', function(e) {
@@ -415,7 +1401,6 @@
             reader.onload = function(e) {
                 uploadedImage = e.target.result;
 
-                // Показываем загруженное изображение
                 screenshotArea.innerHTML = `
                     <img src="${uploadedImage}" class="uploaded-image" alt="Загруженный скриншот">
                     <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 10px; font-size: 12px;">
@@ -423,7 +1408,6 @@
                     </div>
                 `;
 
-                // Активируем кнопку получения сигнала
                 document.getElementById('getSignalBtn').disabled = false;
             };
 
@@ -436,43 +1420,6 @@
                 return;
             }
 
-            if (!canGetSignal) {
-                alert('Пожалуйста, подождите, пока закончится время ожидания!');
-                return;
-            }
-
-            // Блокируем кнопку и запускаем таймер
-            canGetSignal = false;
-            document.getElementById('getSignalBtn').disabled = true;
-
-            // Показываем таймер
-            const timer = document.getElementById('timer');
-            timer.style.display = 'block';
-
-            // Сбрасываем время
-            timeLeft = 60;
-            document.getElementById('timerCount').textContent = timeLeft;
-
-            // Запускаем таймер
-            timerInterval = setInterval(updateTimer, 1000);
-
-            // Выполняем анализ
-            performAnalysis();
-        }
-
-        function updateTimer() {
-            timeLeft--;
-            document.getElementById('timerCount').textContent = timeLeft;
-
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                canGetSignal = true;
-                document.getElementById('getSignalBtn').disabled = false;
-                document.getElementById('timer').style.display = 'none';
-            }
-        }
-
-        function performAnalysis() {
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
             const resultText = document.getElementById('resultText');
@@ -481,7 +1428,6 @@
             result.style.display = 'none';
 
             setTimeout(() => {
-                // Диапазон спинов: 25-45
                 const spins = Math.floor(Math.random() * 21) + 25;
                 const chance = Math.floor(Math.random() * 14) + 79;
 
@@ -517,7 +1463,6 @@
             }, 500);
         });
 
-        // Закрытие модального окна при клике вне его
         window.addEventListener('click', function(event) {
             const modal = document.getElementById('howItWorksModal');
             if (event.target === modal) {
